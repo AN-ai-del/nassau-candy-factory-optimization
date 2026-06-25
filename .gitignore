@@ -1,0 +1,92 @@
+# ==========================
+# Python
+# ==========================
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==========================
+# Virtual Environment
+# ==========================
+
+.venv/
+venv/
+env/
+ENV/
+
+# ==========================
+# Jupyter Notebook
+# ==========================
+
+.ipynb_checkpoints/
+
+# ==========================
+# VS Code
+# ==========================
+
+.vscode/
+
+# ==========================
+# Environment Variables
+# ==========================
+
+.env
+
+# ==========================
+# Python Packaging
+# ==========================
+
+build/
+dist/
+*.egg-info/
+
+# ==========================
+# Logs
+# ==========================
+
+*.log
+
+# ==========================
+# OS Files
+# ==========================
+
+.DS_Store
+Thumbs.db
+
+# ==========================
+# Model Files (Optional)
+# Uncomment if models become large
+# ==========================
+
+# models/trained_models/*.pkl
+# models/trained_models/*.joblib
+
+# ==========================
+# Data Files (Optional)
+# Uncomment if dataset cannot be shared
+# ==========================
+
+# data/raw/*
+# !data/raw/.gitkeep
+
+# ==========================
+# Streamlit
+# ==========================
+
+.streamlit/secrets.toml
+
+# ==========================
+# Coverage & Testing
+# ==========================
+
+.coverage
+htmlcov/
+.pytest_cache/
+
+# ==========================
+# Miscellaneous
+# ==========================
+
+*.tmp
+*.bak
