@@ -1,197 +1,153 @@
-# 🏭 Nassau Candy Factory Reallocation & Shipping Optimization Recommendation System
+# 🍬 Nassau Candy Factory Reallocation & Shipping Optimization Recommendation System
 
-An AI-powered Decision Intelligence System that predicts shipping performance, simulates factory-product reassignment scenarios, and recommends optimal factory allocations to improve logistics efficiency while maintaining profitability.
+## 📌 Project Status
+
+🚧 In Progress
+
+Current Milestone:
+- ✅ Business Understanding
+- ✅ Data Preparation & Quality Assessment
+- ⏳ Exploratory Data Analysis
+- ⏳ Feature Engineering
+- ⏳ Machine Learning Models
+- ⏳ Factory Optimization Engine
+- ⏳ Streamlit Dashboard
 
 ---
 
-## 📌 Project Overview
+# Project Overview
 
-Nassau Candy Distributor currently assigns products to factories using static business rules. These legacy assignments often result in inefficient shipping routes, increased delivery lead times, and reduced profitability.
+This project develops an intelligent recommendation system for Nassau Candy Distributor to optimize factory-product assignments and improve shipping efficiency.
 
-This project develops an intelligent recommendation system that combines Exploratory Data Analysis (EDA), Machine Learning, and Optimization techniques to identify better factory allocation strategies before operational changes are implemented.
+Rather than relying on static factory allocation rules, the system predicts shipping performance under alternative factory assignments and recommends configurations that reduce lead times while maintaining profitability.
 
-Rather than simply analyzing historical data, the system provides actionable recommendations that support data-driven business decision-making.
+The project combines predictive machine learning, optimization techniques, and interactive business intelligence into a single decision-support platform.
 
 ---
 
-## 🎯 Business Problem
+# Business Problem
 
-The current factory allocation process suffers from several operational limitations:
+Current factory assignments are based on legacy operational rules rather than data-driven optimization.
 
-- Static factory-product assignments
-- Longer shipping distances
+This can result in:
+
 - Increased shipping lead times
 - Higher logistics costs
 - Reduced operational efficiency
-- Limited decision support for managers
+- Margin erosion
+- Limited ability to simulate alternate factory assignments
 
-Business users currently have no way to simulate alternative factory assignments or evaluate their operational impact before implementation.
-
----
-
-## 🎯 Project Objectives
-
-This project aims to:
-
-- Analyze historical shipping and sales performance
-- Predict shipping lead times using Machine Learning
-- Evaluate factory performance across multiple regions
-- Simulate alternative factory allocation scenarios
-- Recommend optimal product-to-factory assignments
-- Improve shipping efficiency while maintaining profitability
-- Develop an interactive Streamlit dashboard for business users
+The objective is to build a recommendation engine capable of evaluating alternative factory configurations before implementation.
 
 ---
 
-## 🛠️ Technology Stack
+# Objectives
 
-### Programming Language
-- Python
+The project aims to:
 
-### Data Analysis
-- Pandas
-- NumPy
-
-### Data Visualization
-- Matplotlib
-- Plotly
-
-### Machine Learning
-- Scikit-learn
-
-### Dashboard
-- Streamlit
-
-### Development Tools
-- VS Code
-- Git
-- GitHub
-- Jupyter Notebook
+- Analyze historical shipping data
+- Predict shipping performance
+- Simulate factory reassignment scenarios
+- Recommend optimal factory allocations
+- Balance shipping speed and profitability
+- Build an interactive decision-support dashboard
 
 ---
 
-## 📂 Project Structure
+# Dataset
 
-```text
-NASSAU-CANDY-FACTORY-OPTIMIZATION/
+The dataset contains approximately **10,000+ customer orders** including:
 
+- Orders
+- Customers
+- Products
+- Sales
+- Gross Profit
+- Cost
+- Units Sold
+- Shipping Mode
+- Geographic Information
+
+Factory coordinate information is integrated separately for optimization analysis.
+
+---
+
+# Project Structure
+
+```
+NASSAU-CANDY-FACTORY-OPTIMIZATION
 │
-
 ├── config/
 ├── dashboard/
 ├── data/
 ├── docs/
-├── models/
 ├── notebooks/
 ├── reports/
 ├── src/
-├── tests/
-
-├── README.md
 ├── requirements.txt
-├── LICENSE
-└── .gitignore
+└── README.md
 ```
 
 ---
 
-## 📊 Dataset Information
+# Current Progress
 
-**Dataset Name**
-
-Nassau Candy Distributor
-
-**Dataset Size**
-
-- 10,194 records
-- 18 features
-
-Key attributes include:
-
-- Order Information
-- Customer Information
-- Product Information
-- Sales
-- Cost
-- Gross Profit
-- Shipping Details
-- Geographic Information
-
----
-
-## 🚀 Development Roadmap
-
-| Milestone | Status |
-|-----------|:------:|
-| Repository Setup | ✅ |
+| Phase | Status |
+|--------|--------|
 | Business Understanding | ✅ |
-| Project Planning | ✅ |
-| Data Preparation | ⏳ |
+| Data Preparation | ✅ |
 | Exploratory Data Analysis | ⏳ |
 | Feature Engineering | ⏳ |
 | Machine Learning | ⏳ |
 | Optimization Engine | ⏳ |
-| Recommendation System | ⏳ |
-| Streamlit Dashboard | ⏳ |
-| Documentation | ⏳ |
-| Deployment | ⏳ |
+| Dashboard | ⏳ |
 
 ---
 
-## 📈 Expected Features
+# Tech Stack
 
-- Executive Business Dashboard
-- Shipping Performance Analysis
-- Factory Performance Analysis
-- Lead Time Prediction
-- Factory Optimization Engine
+- Python
+- Pandas
+- NumPy
+- Scikit-learn
+- Plotly
+- Streamlit
+- Folium
+- Matplotlib
+- Seaborn
+
+---
+
+# Project Roadmap
+
+- Business Understanding
+- Data Audit
+- Exploratory Data Analysis
+- Feature Engineering
+- Predictive Modeling
+- Route Optimization
+- Scenario Simulation
 - Recommendation System
-- What-If Scenario Simulator
-- Interactive Streamlit Dashboard
-- Executive Summary Report
+- Dashboard Development
+- Final Research Paper
 
 ---
 
-## 📋 Current Progress
+# Future Work
 
-**Current Milestone**
-
-✅ Milestone 1 — Business Understanding & Project Planning
-
-Completed:
-
-- Repository initialization
-- Project structure
-- Development environment setup
-- Business understanding documentation
-- Project roadmap
+- Geographic routing optimization
+- Real-time shipment prediction
+- Supply chain simulation
+- Reinforcement learning for allocation optimization
+- Cloud deployment
 
 ---
 
-## 🔮 Future Enhancements
-
-Planned enhancements include:
-
-- Shipping distance calculation
-- Recommendation confidence score
-- Interactive factory map
-- Factory performance scoring
-- Scenario simulation engine
-- Model explainability
-- Downloadable recommendation reports
-
----
-
-## 👩‍💻 Author
+# Author
 
 **Anushka Das**
 
-Artificial Intelligence & Machine Learning Enthusiast
+AI • Machine Learning • Data Science
 
-GitHub: https://github.com/AN-ai-del
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
+GitHub:
+https://github.com/AN-ai-del
