@@ -6,19 +6,30 @@ sys.path.append(str(BASE_DIR))
 
 import streamlit as st
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 
-from src.models.predict import predict_profit, predict_single_order
+from src.data.load_data import load_processed_data
+from src.models.predict import predict_profit
+from src.optimization.recommendation_engine import recommend_strategy
+from src.optimization.strategy_optimizer import find_best_strategy
+from src.utils.helpers import format_currency, classify_profit_opportunity
+from src.visualization.plots import (
+    profit_distribution_chart,
+    region_profit_chart,
+    shipping_profit_chart,
+    sales_category_profit_chart,
+    region_distribution_chart,
+    sales_growth_simulation_chart,
+    profit_gauge,
+)
+
+
 st.set_page_config(
     page_title="Factory Optimization Dashboard",
     page_icon="🏭",
     layout="wide"
 )
-DATA_PATH = BASE_DIR / "data" / "processed"
 
-df = pd.read_csv(DATA_PATH / "factory_sales_feature_engineered.csv")
-
+df = load_processed_data()
 df["Predicted Profit"] = predict_profit(df)
 
 st.title("🏭 Factory Optimization Dashboard")
@@ -79,8 +90,8 @@ high_profit_threshold = float(df["Predicted Profit"].quantile(0.75))
 
 col1, col2, col3, col4 = st.columns(4)
 
-col1.metric("💰 Average Profit", f"${avg_profit:.2f}")
-col2.metric("🏆 Highest Profit", f"${highest_profit:.2f}")
+col1.metric("💰 Average Profit", format_currency(avg_profit))
+col2.metric("🏆 Highest Profit", format_currency(highest_profit))
 col3.metric("🌍 Best Region", best_region)
 col4.metric("🚚 Best Ship Mode", best_ship)
 
@@ -111,7 +122,7 @@ with tab1:
         input_sales_category = st.selectbox("Sales Category", sorted(df["Sales Category"].unique()))
         input_high_value = st.checkbox("High Value Order", value=True)
 
-    predicted_profit = predict_single_order(
+    recommendation = recommend_strategy(
         sales=input_sales,
         cost=input_cost,
         units=input_units,
@@ -121,43 +132,48 @@ with tab1:
         high_value_order=int(input_high_value)
     )
 
-    if predicted_profit >= high_profit_threshold:
-        status = "Excellent"
-        action = "Prioritize this order"
-        box = st.success
-    elif predicted_profit >= median_profit:
-        status = "Moderate"
-        action = "Acceptable order"
-        box = st.info
-    else:
-        status = "Low"
-        action = "Review before prioritizing"
-        box = st.warning
+    predicted_profit = recommendation["Predicted Profit"]
 
-    col1, col2 = st.columns([1, 2])
+    status, action, risk = classify_profit_opportunity(
+        predicted_profit,
+        median_profit,
+        high_profit_threshold
+    )
 
-    with col1:
-        st.metric("💵 Predicted Profit", f"${predicted_profit:.2f}")
+    left, right = st.columns([1, 2])
+
+    with left:
+        st.metric("💵 Predicted Profit", format_currency(predicted_profit))
         st.progress(min(predicted_profit / max_profit, 1.0))
-        box(f"**Status:** {status}  \n**Action:** {action}")
 
-    with col2:
-        gauge = go.Figure(go.Indicator(
-            mode="gauge+number",
-            value=predicted_profit,
-            title={"text": "Profit Opportunity Score"},
-            gauge={
-                "axis": {"range": [0, max_profit]},
-                "bar": {"color": "#00cc96"},
-                "steps": [
-                    {"range": [0, median_profit], "color": "#ffcccc"},
-                    {"range": [median_profit, high_profit_threshold], "color": "#fff3cd"},
-                    {"range": [high_profit_threshold, max_profit], "color": "#d4edda"}
-                ]
-            }
-        ))
+        message = f"""
+**Status:** {status}
 
-        st.plotly_chart(gauge, use_container_width=True)
+**Action:** {action}
+
+**AI Recommendation:** {recommendation['Recommendation']}
+
+**Risk Level:** {recommendation['Risk']}
+"""
+
+        if risk == "Low":
+            st.success(message)
+        elif risk == "Medium":
+            st.info(message)
+        else:
+            st.warning(message)
+
+    with right:
+        st.plotly_chart(
+            profit_gauge(
+                predicted_profit,
+                max_profit,
+                median_profit,
+                high_profit_threshold
+            ),
+            width="stretch",
+            key="live_profit_gauge"
+        )
 
     st.subheader("📊 Live Sales Growth Simulation")
 
@@ -165,7 +181,7 @@ with tab1:
     profits = []
 
     for sale in sales_values:
-        profit = predict_single_order(
+        result = recommend_strategy(
             sales=sale,
             cost=input_cost,
             units=input_units,
@@ -174,145 +190,97 @@ with tab1:
             sales_category=input_sales_category,
             high_value_order=int(input_high_value)
         )
-        profits.append(profit)
+        profits.append(result["Predicted Profit"])
 
     simulation_df = pd.DataFrame({
         "Sales": sales_values,
         "Predicted Profit": profits
     })
 
-    fig = px.line(
-        simulation_df,
-        x="Sales",
-        y="Predicted Profit",
-        markers=True,
-        title="Impact of Sales on Predicted Profit"
+    st.plotly_chart(
+        sales_growth_simulation_chart(simulation_df),
+        width="stretch",
+        key="live_sales_growth_simulation"
     )
-
-    st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("🧠 AI Prediction Insight")
 
     st.info(f"""
-    The model predicts **${predicted_profit:.2f}** profit for this order.
+### 💰 Predicted Profit
 
-    **Selected Scenario**
-    - Region: **{input_region}**
-    - Shipping Mode: **{input_ship_mode}**
-    - Sales Category: **{input_sales_category}**
-    - Status: **{status}**
-    - Recommended Action: **{action}**
-    """)
+**{format_currency(predicted_profit)}**
+
+---
+
+### 📋 AI Recommendation
+
+{recommendation['Recommendation']}
+
+---
+
+### ⚠ Risk Level
+
+**{recommendation['Risk']}**
+
+---
+
+### Selected Scenario
+
+- Region: **{input_region}**
+- Shipping Mode: **{input_ship_mode}**
+- Sales Category: **{input_sales_category}**
+- High Value Order: **{'Yes' if input_high_value else 'No'}**
+""")
 
 with tab2:
     st.subheader("📈 Predicted Profit Distribution")
 
-    fig = px.histogram(
-        filtered,
-        x="Predicted Profit",
-        nbins=30,
-        title="Distribution of Predicted Profit"
+    st.plotly_chart(
+        profit_distribution_chart(filtered),
+        width="stretch",
+        key="overview_profit_distribution"
     )
-
-    st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("🌍 Regional Profit Overview")
 
-    region_chart = (
-        filtered.groupby("Region")["Predicted Profit"]
-        .mean()
-        .reset_index()
-        .sort_values("Predicted Profit", ascending=False)
+    st.plotly_chart(
+        region_profit_chart(filtered),
+        width="stretch",
+        key="overview_region_profit"
     )
-
-    fig = px.bar(
-        region_chart,
-        x="Region",
-        y="Predicted Profit",
-        color="Region",
-        title="Average Predicted Profit by Region"
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("🍩 Order Distribution by Region")
 
-    region_count = filtered["Region"].value_counts().reset_index()
-    region_count.columns = ["Region", "Order Count"]
-
-    fig = px.pie(
-        region_count,
-        names="Region",
-        values="Order Count",
-        hole=0.45,
-        title="Order Distribution by Region"
+    st.plotly_chart(
+        region_distribution_chart(filtered),
+        width="stretch",
+        key="overview_region_distribution"
     )
-
-    st.plotly_chart(fig, use_container_width=True)
 
 with tab3:
     st.subheader("🌍 Regional Performance")
 
-    region_chart = (
-        filtered.groupby("Region")["Predicted Profit"]
-        .mean()
-        .reset_index()
-        .sort_values("Predicted Profit")
+    st.plotly_chart(
+        region_profit_chart(filtered),
+        width="stretch",
+        key="analytics_region_profit"
     )
-
-    fig = px.bar(
-        region_chart,
-        x="Predicted Profit",
-        y="Region",
-        orientation="h",
-        color="Predicted Profit",
-        color_continuous_scale="Viridis",
-        title="Average Predicted Profit by Region"
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("🚚 Shipping Mode Performance")
 
-    ship_chart = (
-        filtered.groupby("Ship Mode")["Predicted Profit"]
-        .mean()
-        .reset_index()
-        .sort_values("Predicted Profit")
+    st.plotly_chart(
+        shipping_profit_chart(filtered),
+        width="stretch",
+        key="analytics_shipping_profit"
     )
-
-    fig = px.bar(
-        ship_chart,
-        x="Predicted Profit",
-        y="Ship Mode",
-        orientation="h",
-        color="Predicted Profit",
-        color_continuous_scale="Viridis",
-        title="Average Predicted Profit by Shipping Mode"
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("📦 Sales Category Performance")
 
-    category_chart = (
-        filtered.groupby("Sales Category")["Predicted Profit"]
-        .mean()
-        .reset_index()
-        .sort_values("Predicted Profit")
+    st.plotly_chart(
+        sales_category_profit_chart(filtered),
+        width="stretch",
+        key="analytics_category_profit"
     )
-
-    fig = px.bar(
-        category_chart,
-        x="Predicted Profit",
-        y="Sales Category",
-        orientation="h",
-        color="Predicted Profit",
-        color_continuous_scale="Viridis",
-        title="Average Predicted Profit by Sales Category"
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
 
 with tab4:
     st.subheader("🎯 AI Recommendation Cards")
@@ -322,7 +290,36 @@ with tab4:
     card1.metric("🌍 Best Region", best_region)
     card2.metric("🚚 Best Shipping", best_ship)
     card3.metric("📦 Best Category", best_category)
-    card4.metric("🏆 Highest Profit", f"${highest_profit:.2f}")
+    card4.metric("🏆 Highest Profit", format_currency(highest_profit))
+
+    st.subheader("🧠 Automatic Strategy Optimizer")
+
+    best_strategy = find_best_strategy(
+        sales=250,
+        cost=110,
+        units=15,
+        regions=sorted(df["Region"].unique()),
+        ship_modes=sorted(df["Ship Mode"].unique()),
+        sales_categories=sorted(df["Sales Category"].unique())
+    )
+
+    st.success(f"""
+### 🏆 Best Strategy Found
+
+✅ **Region:** {best_strategy['Region']}
+
+✅ **Shipping Mode:** {best_strategy['Ship Mode']}
+
+✅ **Sales Category:** {best_strategy['Sales Category']}
+
+✅ **Expected Profit:** {format_currency(best_strategy['Predicted Profit'])}
+
+✅ **Risk Level:** {best_strategy['Risk']}
+
+### AI Recommendation
+
+{best_strategy['Recommendation']}
+""")
 
     st.subheader("🏆 Top Recommended Orders")
 
@@ -342,39 +339,40 @@ with tab4:
 
     st.dataframe(
         top_orders,
-        use_container_width=True,
+        width="stretch",
         hide_index=True
     )
 
     st.subheader("📋 Executive Recommendation")
 
     st.success(f"""
-    ### Recommended Strategy
+### Recommended Strategy
 
-    ✅ Prioritize production in **{best_region}**
+✅ Prioritize production in **{best_region}**
 
-    ✅ Prefer **{best_ship}** shipping
+✅ Prefer **{best_ship}** shipping
 
-    ✅ Focus on **{best_category}** sales category
+✅ Focus on **{best_category}** sales category
 
-    ### Executive Summary
+### Executive Summary
 
-    - **{best_region}** generates the highest average predicted profit.
-    - **{best_ship}** provides the strongest expected shipping return.
-    - **{best_category}** sales category shows the highest profitability.
-    - The highest predicted profit opportunity is **${highest_profit:.2f}**.
-    - Sales and units strongly influence expected profit.
-    - The dashboard supports factory allocation, shipment planning, and business decision-making.
-    """)
+- **{best_region}** generates the highest average predicted profit.
+- **{best_ship}** provides the strongest expected shipping return.
+- **{best_category}** sales category shows the highest profitability.
+- The highest predicted profit opportunity is **{format_currency(highest_profit)}**.
+- Sales and units strongly influence expected profit.
+- The dashboard supports factory allocation, shipment planning, and business decision-making.
+""")
 
     st.subheader("🧠 AI Business Insights")
 
     st.info(f"""
-    The model recommends focusing on **{best_region}**, using **{best_ship}**, 
-    and prioritizing **{best_category}** sales opportunities.
+The model recommends focusing on **{best_region}**, using **{best_ship}**, 
+and prioritizing **{best_category}** sales opportunities.
 
-    This combination is expected to maximize profit based on historical factory sales patterns.
-    """)
+The automatic strategy optimizer also searches across multiple business combinations 
+to identify the strongest profit opportunity.
+""")
 
 st.markdown("---")
 
