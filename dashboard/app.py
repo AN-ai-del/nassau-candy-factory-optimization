@@ -1,75 +1,25 @@
+import sys
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(BASE_DIR))
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import joblib
-from pathlib import Path
 
+from src.models.predict import predict_profit, predict_single_order
 st.set_page_config(
     page_title="Factory Optimization Dashboard",
     page_icon="🏭",
     layout="wide"
 )
-
-BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_DIR / "data" / "processed"
-MODEL_PATH = BASE_DIR / "models"
 
 df = pd.read_csv(DATA_PATH / "factory_sales_feature_engineered.csv")
-model = joblib.load(MODEL_PATH / "gradient_boosting_model.pkl")
 
-features = [
-    "Sales", "Cost", "Units", "High Value Order",
-    "Order Year", "Order Month", "Order Quarter", "Is Weekend",
-    "Ship Mode", "Region", "Sales Category"
-]
-
-
-def prepare_features(data):
-    X = data[features]
-
-    X_encoded = pd.get_dummies(
-        X,
-        columns=["Ship Mode", "Region", "Sales Category"],
-        drop_first=True
-    )
-
-    X_encoded = X_encoded.reindex(
-        columns=model.feature_names_in_,
-        fill_value=0
-    )
-
-    return X_encoded
-
-
-def predict_profit_input(
-    sales,
-    cost,
-    units,
-    region,
-    ship_mode,
-    sales_category,
-    high_value_order
-):
-    sample = pd.DataFrame([{
-        "Sales": sales,
-        "Cost": cost,
-        "Units": units,
-        "High Value Order": int(high_value_order),
-        "Order Year": 2024,
-        "Order Month": 6,
-        "Order Quarter": 2,
-        "Is Weekend": 0,
-        "Ship Mode": ship_mode,
-        "Region": region,
-        "Sales Category": sales_category
-    }])
-
-    sample_encoded = prepare_features(sample)
-    return model.predict(sample_encoded)[0]
-
-
-df["Predicted Profit"] = model.predict(prepare_features(df))
+df["Predicted Profit"] = predict_profit(df)
 
 st.title("🏭 Factory Optimization Dashboard")
 
@@ -122,6 +72,7 @@ highest_profit = filtered["Predicted Profit"].max()
 best_region = filtered.groupby("Region")["Predicted Profit"].mean().idxmax()
 best_ship = filtered.groupby("Ship Mode")["Predicted Profit"].mean().idxmax()
 best_category = filtered.groupby("Sales Category")["Predicted Profit"].mean().idxmax()
+
 max_profit = float(df["Predicted Profit"].max())
 median_profit = float(df["Predicted Profit"].median())
 high_profit_threshold = float(df["Predicted Profit"].quantile(0.75))
@@ -160,14 +111,14 @@ with tab1:
         input_sales_category = st.selectbox("Sales Category", sorted(df["Sales Category"].unique()))
         input_high_value = st.checkbox("High Value Order", value=True)
 
-    predicted_profit = predict_profit_input(
-        input_sales,
-        input_cost,
-        input_units,
-        input_region,
-        input_ship_mode,
-        input_sales_category,
-        input_high_value
+    predicted_profit = predict_single_order(
+        sales=input_sales,
+        cost=input_cost,
+        units=input_units,
+        region=input_region,
+        ship_mode=input_ship_mode,
+        sales_category=input_sales_category,
+        high_value_order=int(input_high_value)
     )
 
     if predicted_profit >= high_profit_threshold:
@@ -214,14 +165,14 @@ with tab1:
     profits = []
 
     for sale in sales_values:
-        profit = predict_profit_input(
-            sale,
-            input_cost,
-            input_units,
-            input_region,
-            input_ship_mode,
-            input_sales_category,
-            input_high_value
+        profit = predict_single_order(
+            sales=sale,
+            cost=input_cost,
+            units=input_units,
+            region=input_region,
+            ship_mode=input_ship_mode,
+            sales_category=input_sales_category,
+            high_value_order=int(input_high_value)
         )
         profits.append(profit)
 
