@@ -1,190 +1,143 @@
-# Business Understanding
-
-## 1. Company Background
-
-Nassau Candy Distributor is a confectionery distribution company responsible for supplying a wide range of candy and snack products to customers across multiple regions. The company manufactures and distributes products through multiple production facilities (factories), each responsible for producing specific product categories.
-
-As customer demand grows across different geographical regions, efficient factory allocation and shipping operations become increasingly important. Shipping delays, longer transportation distances, and inefficient factory assignments can increase operational costs, reduce customer satisfaction, and negatively affect overall profitability.
-
-To remain competitive, Nassau Candy requires a more intelligent and data-driven approach for deciding which factory should manufacture and ship each product.
+# 🏭 Business Understanding
 
 ---
 
-## 2. Business Problem
+# Project Overview
 
-The current factory assignment process follows static business rules and legacy operational practices. Every product is permanently assigned to a predefined factory regardless of changing customer demand, shipping distance, transportation efficiency, or regional order patterns.
+Modern manufacturing and distribution companies process thousands of customer orders every day. Every shipment, pricing decision, transportation method, and regional allocation directly affects company profitability.
 
-This approach creates several operational challenges:
+Making these decisions manually becomes increasingly difficult as order volume grows.
 
-- Longer shipping distances for certain customer regions.
-- Increased shipping lead times.
-- Higher logistics and transportation costs.
-- Reduced operational efficiency.
-- Lower overall profitability.
-- Lack of flexibility when customer demand changes.
+This project applies Machine Learning and Business Intelligence techniques to predict expected profit for every order and automatically recommend business strategies that maximize profitability while minimizing operational risk.
 
-Furthermore, business managers currently have no analytical system that can simulate alternative factory assignments before implementing operational changes.
+The dashboard transforms raw operational data into actionable recommendations for business managers and supply chain planners.
 
 ---
 
-## 3. Existing Business Process
+# Business Problem
 
-Currently, the order fulfillment workflow follows a fixed sequence:
+Organizations frequently face questions such as:
 
-1. A customer places an order.
-2. The ordered product is linked to its predefined factory.
-3. The factory manufactures or dispatches the product.
-4. The shipment is delivered using the selected shipping mode.
-5. The customer receives the order.
+- Which customer orders are likely to generate the highest profit?
+- Which shipping method produces the greatest return?
+- Which geographical region should receive greater operational focus?
+- Which product categories contribute most to business profitability?
+- Which future orders deserve higher production priority?
 
-Since factory assignments remain fixed, managers cannot evaluate whether another factory could fulfill the same order more efficiently.
+Traditional reporting systems describe historical performance but cannot predict future profitability.
 
----
-
-## 4. Current Challenges
-
-The existing logistics system presents several business challenges:
-
-- Static factory-product assignments
-- Inefficient shipping routes
-- Long delivery lead times
-- Increasing logistics expenses
-- Reduced gross profit margins
-- No predictive decision support
-- Inability to simulate alternative factory allocation strategies
-- Limited visibility into operational performance across factories
-
-These challenges limit the organization's ability to optimize shipping efficiency while maintaining profitability.
+This project addresses that limitation by building an AI-powered decision support system.
 
 ---
 
-## 5. Business Objectives
+# Business Objectives
 
-The primary objective of this project is to develop an AI-powered Factory Reallocation and Shipping Optimization Recommendation System capable of supporting data-driven operational decisions.
+The primary objectives of the project are:
 
-The proposed system aims to:
-
-- Predict shipping lead times for different shipping scenarios.
-- Evaluate factory performance across multiple regions.
-- Simulate alternative factory assignments.
-- Recommend optimal factory allocations for each product.
-- Improve shipping efficiency while preserving profitability.
-- Provide decision-makers with actionable recommendations before implementing operational changes.
-
----
-
-## 6. Project Goals
-
-This project combines descriptive analytics, predictive analytics, and optimization techniques to transform historical operational data into an intelligent decision support system.
-
-The specific goals are:
-
-- Analyze historical shipping performance.
-- Identify operational bottlenecks.
-- Build machine learning models for lead time prediction.
-- Compare different predictive algorithms.
-- Develop a recommendation engine for factory reassignment.
-- Quantify operational improvements under different scenarios.
-- Build an interactive Streamlit dashboard for business users.
+- Predict expected profit before business decisions are made
+- Identify high-value business opportunities
+- Optimize shipping strategy
+- Recommend profitable regional allocation
+- Support production planning
+- Improve operational efficiency
+- Reduce low-profit business decisions
 
 ---
 
-## 7. Expected Business Impact
+# Business Value
 
-Successful implementation of the recommendation system is expected to provide several business benefits:
+The system provides value by enabling managers to make data-driven decisions instead of relying solely on historical reports or intuition.
 
-- Reduced shipping lead times
-- Improved customer satisfaction
-- Lower transportation costs
-- Increased operational efficiency
-- Better utilization of factory resources
-- Improved profitability
-- Data-driven decision making
-- Higher scalability for future business expansion
+Potential business benefits include:
 
----
-
-## 8. Success Metrics
-
-The project will be evaluated using both machine learning and business performance metrics.
-
-### Machine Learning Metrics
-
-- Mean Absolute Error (MAE)
-- Root Mean Squared Error (RMSE)
-- R² Score
-
-### Business Performance Metrics
-
-- Lead Time Reduction (%)
-- Profit Impact
-- Recommendation Confidence Score
-- Recommendation Coverage
-- Factory Utilization
-- Operational Efficiency Improvement
+- Higher average profit per order
+- Improved shipping efficiency
+- Better regional resource allocation
+- Reduced operational risk
+- Faster decision making
+- Increased productivity
+- Scalable decision support
 
 ---
 
-## 9. Project Scope
+# Target Users
 
-This project focuses on analyzing historical order and shipping data to develop an intelligent recommendation system for factory allocation.
+The dashboard is designed for multiple stakeholders including:
 
-The scope includes:
+## Operations Managers
 
-- Data preparation
-- Exploratory Data Analysis
-- Feature engineering
-- Shipping lead time prediction
-- Factory performance evaluation
-- Route optimization analysis
-- Factory recommendation engine
-- What-if scenario simulation
-- Interactive Streamlit dashboard
-- Executive reporting
+Monitor production performance and identify profitable operational strategies.
 
-The project does not include real-time ERP integration or live production deployment.
+## Supply Chain Teams
 
----
+Compare shipping modes and optimize logistics decisions.
 
-## 10. Assumptions
+## Business Analysts
 
-The following assumptions are made during project development:
+Analyze profitability trends using interactive dashboards and visualizations.
 
-- Historical data accurately represents business operations.
-- Product demand patterns remain reasonably consistent.
-- Factory coordinates provided are accurate.
-- Shipping modes remain unchanged during simulation.
-- Historical shipping behavior is suitable for predictive modeling.
-- Factory capacity constraints are outside the scope of this project.
+## Factory Managers
+
+Prioritize manufacturing resources based on predicted business value.
+
+## Executive Leadership
+
+Use summarized KPIs and AI-generated recommendations for strategic planning.
 
 ---
 
-## 11. Expected Deliverables
+# Business Questions Addressed
 
-The final project will include:
+The project answers several important business questions:
 
-- Clean and processed dataset
-- Exploratory Data Analysis report
-- Machine Learning models
-- Factory Optimization Engine
-- Recommendation System
-- Scenario Simulation Engine
-- Interactive Streamlit dashboard
-- Research paper
-- Executive summary
-- GitHub repository with complete documentation
+- Which region generates the highest expected profit?
+- Which shipping mode should be prioritized?
+- Which sales category provides better returns?
+- What is the predicted profit of a future order?
+- Which orders should receive operational priority?
+- Which strategy produces the maximum expected profit?
 
 ---
 
-## 12. Future Scope
+# Machine Learning Objective
 
-Future enhancements may include:
+The predictive model estimates expected profit using operational features such as:
 
-- Real-time shipment tracking integration
-- Live ERP and warehouse integration
-- Dynamic demand forecasting
-- Factory capacity optimization
-- Vehicle route optimization
-- Reinforcement learning-based allocation strategies
-- Cost-sensitive optimization algorithms
-- Cloud deployment for enterprise-scale decision support
+- Sales
+- Cost
+- Units Sold
+- Region
+- Shipping Mode
+- Sales Category
+- High Value Order Indicator
+
+The resulting predictions are combined with business rules to generate human-readable recommendations.
+
+---
+
+# Key Performance Indicators (KPIs)
+
+The dashboard monitors important business metrics including:
+
+- Average Predicted Profit
+- Highest Predicted Profit
+- Best Performing Region
+- Best Shipping Method
+- Sales Category Performance
+- Regional Distribution
+- Profit Distribution
+- Business Risk Classification
+
+---
+
+# Business Impact
+
+By integrating predictive analytics with optimization techniques, the system supports proactive decision-making rather than reactive reporting.
+
+Instead of simply analyzing previous business performance, managers can evaluate future scenarios, compare operational strategies, and prioritize actions that maximize expected profitability.
+
+---
+
+# Conclusion
+
+The Factory Optimization Dashboard demonstrates how Machine Learning can support real-world manufacturing and supply chain decision-making by combining predictive modeling, interactive analytics, and automated strategy recommendations into a unified business intelligence platform.
